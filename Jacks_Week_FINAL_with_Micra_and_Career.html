@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f5f7">
+<title>Jack's Week</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;background:#f5f5f7;color:#111;min-height:100vh}
+.app{max-width:560px;margin:auto;padding:18px 16px 92px}.top{display:flex;justify-content:space-between;align-items:center;margin:6px 2px 18px}.brand{font-size:28px;font-weight:800;letter-spacing:-.8px}.sub{color:#777;font-size:13px;margin-top:2px}.pill{background:#fff;border:1px solid #e7e7e7;border-radius:20px;padding:9px 12px;font-weight:700}
+.view{display:none}.view.active{display:block}.hero{background:#111;color:#fff;border-radius:24px;padding:22px;margin-bottom:14px}.hero h1{margin:0 0 6px;font-size:25px}.hero p{margin:0;color:#cfcfcf}.progress{height:8px;background:#2e2e2e;border-radius:9px;overflow:hidden;margin-top:17px}.bar{height:100%;background:#fff;width:0}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:20px;padding:16px;margin:10px 0}.sectiontitle{font-size:19px;font-weight:800;margin:22px 3px 8px}.task{display:flex;gap:13px;align-items:flex-start;padding:14px 4px;border-bottom:1px solid #eee}.task:last-child{border-bottom:0}.box{width:25px;height:25px;border:2px solid #bbb;border-radius:8px;flex:0 0 auto;margin-top:1px;display:grid;place-items:center}.task.done .box{background:#111;border-color:#111;color:#fff}.task.done .box:after{content:"✓";font-size:16px;font-weight:800}.task.done .txt{text-decoration:line-through;color:#999}.txt{font-size:16px;line-height:1.3;font-weight:600}.meta{font-size:12px;color:#888;margin-top:4px;font-weight:500}
+.days{display:flex;gap:7px;overflow:auto;padding-bottom:3px}.daybtn{border:0;background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:10px 12px;font-weight:700;white-space:nowrap}.daybtn.active{background:#111;color:#fff}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(250,250,250,.94);backdrop-filter:blur(14px);border-top:1px solid #ddd;z-index:5}.navin{max-width:560px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}.nav button{border:0;background:none;padding:12px 3px 13px;font-size:11px;color:#777;font-weight:700}.nav button.active{color:#111}.ico{display:block;font-size:20px;margin-bottom:3px}
+.stat{display:flex;justify-content:space-between;align-items:center}.big{font-size:42px;font-weight:850;letter-spacing:-2px}.smallmuted{color:#888;font-size:13px}.row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eee}.row:last-child{border:0}.tag{font-size:11px;background:#f0f0f0;padding:5px 8px;border-radius:9px;font-weight:700}
+button{font-family:inherit;cursor:pointer}.action{width:100%;border:0;border-radius:14px;padding:13px;background:#111;color:#fff;font-weight:800;margin-top:8px}.secondary{background:#f1f1f1;color:#111}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;font:inherit;margin:5px 0 9px}.empty{color:#888;text-align:center;padding:25px 10px}.back{border:0;background:none;padding:0;font-weight:800;font-size:15px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div><div class="brand">Jack's Week</div><div class="sub" id="dateSub"></div></div>
+    <button class="pill" onclick="showView('more')">☰</button>
+  </div>
+
+  <section id="today" class="view active"></section>
+  <section id="week" class="view"></section>
+  <section id="progress" class="view"></section>
+  <section id="micra" class="view"></section>
+  <section id="career" class="view"></section>
+  <section id="more" class="view"></section>
+</div>
+
+<nav class="nav"><div class="navin">
+<button onclick="showView('today')" data-v="today"><span class="ico">✓</span>Today</button>
+<button onclick="showView('week')" data-v="week"><span class="ico">▦</span>Week</button>
+<button onclick="showView('progress')" data-v="progress"><span class="ico">◔</span>Progress</button>
+<button onclick="showView('micra')" data-v="micra"><span class="ico">🚗</span>Micra</button>
+<button onclick="showView('career')" data-v="career"><span class="ico">⌁</span>Career</button>
+</div></nav>
+
+<script>
+const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const categories=["Career","Work","Girlfriend","Money","Health","Micra","Life"];
+const weekTasks=[
+["Monday","Call CAVC about CAD course","Career",true],["Monday","Message work about punctuality / situation","Work",true],["Monday","Date with girlfriend","Girlfriend",false],["Monday","Eat a proper healthy meal","Health",false],["Monday","Light CV / job admin if energy","Career",false],["Monday","Check insurance","Money",true],["Monday","Consider listing DeWalt SDS","Money",false],
+["Tuesday","Girlfriend hospital appointment","Girlfriend",true],["Tuesday","Look after girlfriend afterwards","Girlfriend",true],["Tuesday","Easy food and rest","Health",false],["Tuesday","Only light career/admin if energy","Career",false],
+["Wednesday","Apply for 1–2 suitable jobs","Career",true],["Wednesday","Follow up CAVC / enrolment","Career",true],["Wednesday","CAD learning / practice","Career",false],
+["Thursday","Apply for 1–2 suitable jobs","Career",true],["Thursday","Sort one important money task","Money",true],["Thursday","Light fitness / recovery","Health",false],
+["Friday","Apply for 1–2 suitable jobs","Career",true],["Friday","CAD learning / portfolio practice","Career",false],
+["Saturday","Girlfriend / family time","Girlfriend",false],["Saturday","Light Micra planning only","Micra",false],["Saturday","Healthy food / recovery","Health",false],
+["Sunday","Review finances","Money",true],["Sunday","Plan next week","Life",true],["Sunday","CAD / career review","Career",false]
+];
+
+const micra={
+"Mechanical & reliability":[
+"Full mechanical refresh","MOT / roadworthiness sorted","Fix boot floor / spare-wheel well dent properly","Get boot closing and latching correctly","Fix heavy-rain water ingress","Investigate startup rattle / low oil-light behaviour","Refresh brakes and brake fluid","Refresh transmission fluid","Suspension refresh when budget allows","Fit GizFab adjustable panhard rod","Inspect rear axle / bent support after impact"
+],
+"Body & restoration":[
+"Repair / replace cracked rear bumper","Sort loose boot handle","Repair scratches / bush damage","Check front door hinge areas and clean leaves/debris","Keep car rust-free","Deep clean underside","Clean engine bay","Restore alloys / deal with peeling and curbing"
+],
+"Interior & boot build":[
+"Finish flat rear boot build","Add carpet / clean OEM+ finish","Make two rear storage hatches","Keep spare-wheel access hatchable","Plan lightweight tool storage","Add practical boot lighting","Decide whether rear seats stay removed","Improve front seating with comfortable OEM+ buckets","Momo black steering wheel"
+],
+"Performance / OEM+":[
+"Confirm 1.3 cams are genuinely correct before fitting","Install 1.3 cams if verified and appropriate","Paint rocker cover OEM+","Plan K&N version of GizFab-style intake","Add protective mesh behind grille","Plan bonnet vent with proper sealing and drainage","GizFab manifold when finances allow","Plan sensible single-exit exhaust","Consider heat shielding / wrap where appropriate","14-inch silver Mini Lite-style wheels with RainSport tyres","GizFab front splitter","Mid-wing spoiler around bottom of rear window"
+],
+"Cleaning & detailing":[
+"Full exterior clean / decontamination","Deep interior clean","Clean door shuts and hinge areas","Clean engine bay carefully","Detail wheels","Use drill attachment detailing kit","Organise storage boxes / tools"
+],
+"Future ideas":[
+"Research stronger engine swap options if 1.0 eventually dies","Research 1.3 / larger Micra engine routes","Explore turbo + ITB possibilities as a long-term project only","Keep overall build OEM+ rather than race-chav"
+]};
+
+const career={
+"Immediate stability":[
+"Protect current income while possible","Secure a backup job ASAP","Update CV","Apply for 5–10 genuinely suitable jobs each week","Use plumbing experience as a backup route","Keep finances stable until new income is secured"
+],
+"CAVC / CAD":[
+"Contact CAVC and confirm CAD course details","Get enrolled on the CAD course","Confirm course day / time","Tell work about the fixed course commitment once enrolled","Use CAVC computers initially","Use spare work breaks for CAD practice where practical"
+],
+"CAD skills":[
+"Learn 2D CAD fundamentals","Practise technical drawing standards","Build confidence with dimensions / layers / layouts","Learn construction drawing conventions","Progress toward 3D CAD","Learn a suitable architectural / construction CAD workflow"
+],
+"Portfolio & career":[
+"Build a small CAD portfolio","Create a few clean house-plan / construction drawing projects","Keep examples of plumbing knowledge as an advantage","Research CAD technician / architectural technician roles","Research apprenticeships / entry-level CAD jobs","Work toward architectural / construction design career"
+],
+"Longer-term setup":[
+"Save for a good home CAD computer","Buy a suitable monitor when affordable","Build a proper home CAD workspace","Move from care into CAD/design when income is stable","Keep developing portfolio and qualifications"
+]};
+
+let state=JSON.parse(localStorage.getItem("jacksWeekState")||"{}");
+state.week=state.week||{}; state.micra=state.micra||{}; state.career=state.career||{};
+let selectedDay=days[Math.max(0,new Date().getDay()-1)]||"Monday";
+
+function save(){localStorage.setItem("jacksWeekState",JSON.stringify(state))}
+function key(type,section,item){return type+"|"+section+"|"+item}
+function done(type,section,item){return !!state[type][key(type,section,item)]}
+function toggle(type,section,item){let k=key(type,section,item);state[type][k]=!state[type][k];save();renderAll()}
+function taskHTML(type,section,item){
+return `<div class="task ${done(type,section,item)?'done':''}" onclick="toggle('${type}','${esc(section)}','${esc(item)}')"><div class="box"></div><div><div class="txt">${item}</div></div></div>`
+}
+function esc(s){return s.replaceAll("\\","\\\\").replaceAll("'","\\'")}
+function allWeek(){return weekTasks.length}
+function weekDone(){return weekTasks.filter(x=>state.week[x[0]+"|"+x[1]]).length}
+function progressForDay(d){let a=weekTasks.filter(x=>x[0]===d),n=a.filter(x=>state.week[x[0]+"|"+x[1]]).length;return [n,a.length]}
+function renderToday(){
+let [n,total]=progressForDay(selectedDay), tasks=weekTasks.filter(x=>x[0]===selectedDay);
+document.getElementById("today").innerHTML=`<div class="days">${days.map(d=>`<button class="daybtn ${d===selectedDay?'active':''}" onclick="selectedDay='${d}';renderAll()">${d.slice(0,3)}</button>`).join("")}</div>
+<div class="hero"><h1>${selectedDay}</h1><p>${n} of ${total} tasks complete</p><div class="progress"><div class="bar" style="width:${total?n/total*100:0}%"></div></div></div>
+<div class="card">${tasks.length?tasks.map(x=>`<div class="task ${state.week[x[0]+"|"+x[1]]?'done':''}" onclick="toggleWeek('${esc(x[0])}','${esc(x[1])}')"><div class="box"></div><div><div class="txt">${x[1]}</div><div class="meta">${x[2]} ${x[3]?'· Priority':''}</div></div></div>`).join(""):'<div class="empty">Nothing planned for this day.</div>'}</div>`;
+}
+function toggleWeek(d,t){let k=d+"|"+t;state.week[k]=!state.week[k];save();renderAll()}
+function renderWeek(){
+document.getElementById("week").innerHTML=`<div class="hero"><h1>This Week</h1><p>${weekDone()} of ${allWeek()} complete</p><div class="progress"><div class="bar" style="width:${weekDone()/allWeek()*100}%"></div></div></div>${days.map(d=>{let [n,total]=progressForDay(d);return `<div class="card" onclick="selectedDay='${d}';showView('today')"><div class="stat"><strong>${d}</strong><span class="tag">${n}/${total}</span></div><div class="progress"><div class="bar" style="width:${total?n/total*100:0}%;background:#111"></div></div></div>`}).join("")}`;
+}
+function renderProgress(){
+let total=weekTasks.length,n=weekDone();
+let cats=categories.map(c=>{let a=weekTasks.filter(x=>x[2]===c),d=a.filter(x=>state.week[x[0]+"|"+x[1]]).length;return `<div class="row"><span>${c}</span><b>${d}/${a.length||0}</b></div>`}).join("");
+document.getElementById("progress").innerHTML=`<div class="hero"><div class="smallmuted">Weekly completion</div><div class="big">${Math.round(n/total*100)}%</div><p>${n} of ${total} complete</p><div class="progress"><div class="bar" style="width:${n/total*100}%"></div></div></div><div class="card">${cats}</div>`;
+}
+function renderLong(type,data,title,icon){
+let sections=Object.entries(data).map(([s,items])=>`<div class="sectiontitle">${s}</div><div class="card">${items.map(i=>taskHTML(type,s,i)).join("")}</div>`).join("");
+document.getElementById(type).innerHTML=`<div class="hero"><h1>${icon} ${title}</h1><p>Long-term list — no deadlines. Tick things off when they are actually done.</p></div>${sections}<button class="action secondary" onclick="addLongTask('${type}')">＋ Add your own task</button>`;
+}
+function addLongTask(type){
+let t=prompt("What do you want to add?");
+if(!t)return; let s=prompt("Which section?")||"Other";
+let data=type==="micra"?micra:career;if(!data[s])data[s]=[];data[s].push(t);save();renderAll();
+}
+function renderMore(){
+document.getElementById("more").innerHTML=`<div class="hero"><h1>More</h1><p>Your planner, long-term projects and reset tools.</p></div>
+<div class="card"><div class="sectiontitle" style="margin-top:0">Planning rule</div><p class="smallmuted">Weekly tasks are for things you intend to do now. Micra and Career are long-term lists with no deadlines.</p></div>
+<div class="card"><button class="action" onclick="resetWeek()">Start a New Week</button><button class="action secondary" onclick="clearLong('micra')">Reset Micra ticks</button><button class="action secondary" onclick="clearLong('career')">Reset Career ticks</button></div>`;
+}
+function resetWeek(){if(confirm("Clear this week's completed tasks?")){state.week={};save();renderAll()}}
+function clearLong(type){if(confirm("Clear all completed ticks in this section?")){state[type]={};save();renderAll()}}
+function showView(v){document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById(v).classList.add("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.v===v));renderAll()}
+function renderAll(){renderToday();renderWeek();renderProgress();renderLong("micra",micra,"Micra","🚗");renderLong("career",career,"Career Plan","💼");renderMore()}
+document.getElementById("dateSub").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+renderAll();showView("today");
+</script>
+</body>
+</html>
